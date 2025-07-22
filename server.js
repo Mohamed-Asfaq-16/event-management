@@ -46,7 +46,7 @@ const Event = mongoose.model('Event', eventSchema);
 const auth = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
     const user = await User.findById(decoded.userId);
     
     if (!user) {
@@ -68,9 +68,7 @@ const adminAuth = async (req, res, next) => {
   next();
 };
 
-// Routes
 
-// Register User
 app.post('/api/register', [
   body('name').notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Valid email is required'),
