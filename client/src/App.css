@@ -234,3 +234,11 @@
     text-align: center;
   }
 } 
+
+.check-admin {
+  padding-right: 20px;  
+}
+
+.check-admin > input {
+  margin-right: 10px;
+}
