@@ -6,7 +6,8 @@ const Register = ({ onRegister }) => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,7 +43,8 @@ const Register = ({ onRegister }) => {
       return;
     }
 
-    const result = await onRegister(formData.name, formData.email, formData.password);
+    console.log(formData);
+    const result = await onRegister(formData.name, formData.email, formData.password, formData.role);
     
     if (result.success) {
       setSuccess(true);
@@ -146,7 +148,33 @@ const Register = ({ onRegister }) => {
                 placeholder="Confirm your password"
               />
             </div>
-            
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="role">
+                Role
+              </label>
+            <label className="check-admin">
+              <input 
+              type="radio" 
+              name="role" 
+              value="admin"
+              checked={formData.role === 'admin'}
+              onChange={handleChange}
+              />
+              admin
+            </label>
+            <label className="check-admin">
+              <input 
+              type="radio" 
+              name="role" 
+              value="user"
+              checked={formData.role === 'user'}
+              onChange={handleChange}
+              />
+              user
+            </label>
+            </div>
+
             <button 
               type="submit" 
               className="btn-login"

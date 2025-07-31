@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['admin', 'user'], default: 'user' },
+  role: { type: String, default: 'user' },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -46,7 +46,7 @@ const Event = mongoose.model('Event', eventSchema);
 const auth = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-key');
     const user = await User.findById(decoded.userId);
     
     if (!user) {
@@ -68,13 +68,12 @@ const adminAuth = async (req, res, next) => {
   next();
 };
 
-// Routes
 
-// Register User
 app.post('/api/register', [
   body('name').notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Valid email is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('role').isIn(['user', 'admin']).withMessage('Role must be user or admin')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -82,7 +81,8 @@ app.post('/api/register', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
+    console.log(req.body);
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -97,10 +97,13 @@ app.post('/api/register', [
     const user = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      role,
     });
 
     await user.save();
+
+    console.log('Saved user:', user);
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
