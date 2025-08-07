@@ -13,6 +13,7 @@ const UserDashboard = ({ user, onLogout }) => {
   const fetchEvents = async () => {
     try {
       const response = await axios.get('/api/events');
+      console.log(response.data);
       setEvents(response.data);
     } catch (error) {
       setError('Failed to fetch events');

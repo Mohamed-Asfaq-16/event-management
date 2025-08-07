@@ -24,7 +24,12 @@ const ComposeEvent = ({ onClose, onEventCreated }) => {
     setError('');
 
     try {
-      const response = await axios.post('/api/events', formData);
+      const token = localStorage.getItem('token');
+      const response = await axios.post('/api/events', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       onEventCreated(response.data);
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to create event');
@@ -137,4 +142,4 @@ const ComposeEvent = ({ onClose, onEventCreated }) => {
   );
 };
 
-export default ComposeEvent; 
+export default ComposeEvent;

@@ -57,6 +57,7 @@ function App() {
   const register = async (name, email, password, role) => {
     try {
       await axios.post('/api/register', { name, email, password, role });
+      
       return { success: true };
     } catch (error) {
       return { 
