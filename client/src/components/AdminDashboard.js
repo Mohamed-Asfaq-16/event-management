@@ -14,9 +14,15 @@ const AdminDashboard = ({ user, onLogout }) => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('/api/admin/events');
+      const token = localStorage.getItem('token');
+      const response = await axios.get('/api/admin/events', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setEvents(response.data);
     } catch (error) {
+      console.log(error);
       setError('Failed to fetch events');
     } finally {
       setLoading(false);
@@ -31,7 +37,12 @@ const AdminDashboard = ({ user, onLogout }) => {
   const handleDeleteEvent = async (eventId) => {
     if (window.confirm('Are you sure you want to delete this event?')) {
       try {
-        await axios.delete(`/api/events/${eventId}`);
+        const token = localStorage.getItem('token');
+        await axios.delete(`/api/events/${eventId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         setEvents(events.filter(event => event._id !== eventId));
       } catch (error) {
         setError('Failed to delete event');
@@ -164,4 +175,4 @@ const AdminDashboard = ({ user, onLogout }) => {
   );
 };
 
-export default AdminDashboard; 
+export default AdminDashboard;
