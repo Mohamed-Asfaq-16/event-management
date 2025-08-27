@@ -22,6 +22,12 @@ const UserDashboard = ({ user, onLogout }) => {
     }
   };
 
+  const getRawLink = (url) => {
+    if (!url) return "";
+    console.log(url.replace("&dl=0", "&raw=1").replace("&dl=1", "&raw=1"));
+    return url.replace("&dl=0", "&raw=1").replace("&dl=1", "&raw=1");
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -79,6 +85,22 @@ const UserDashboard = ({ user, onLogout }) => {
                   <h3 style={{ margin: '0 0 15px 0', color: '#333' }}>
                     {event.title}
                   </h3>
+
+                  {/* Poster Image */}
+                  {event.posterUrl && (
+                    <div style={{ marginBottom: '15px' }}>
+                      <img
+                        src={getRawLink(event.posterUrl)}
+                        alt={`${event.title} poster`}
+                        style={{
+                          width: '100%',
+                          maxHeight: '250px',
+                          objectFit: 'cover',
+                          borderRadius: '8px'
+                        }}
+                      />
+                    </div>
+                  )}
                   
                   <div style={{ marginBottom: '15px' }}>
                     <strong>Organized by:</strong> {event.poster}
@@ -114,4 +136,4 @@ const UserDashboard = ({ user, onLogout }) => {
   );
 };
 
-export default UserDashboard; 
+export default UserDashboard;
