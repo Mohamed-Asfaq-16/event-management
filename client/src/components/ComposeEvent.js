@@ -4,10 +4,12 @@ import axios from 'axios';
 const ComposeEvent = ({ onClose, onEventCreated }) => {
   const [formData, setFormData] = useState({
     title: '',
-    poster: '',
+    organizer: '',
     description: '',
     registrationLink: ''
   });
+
+  const [posterFile, setPosterFile] = useState(null); // for file
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -18,6 +20,10 @@ const ComposeEvent = ({ onClose, onEventCreated }) => {
     });
   };
 
+  const handleFileChange = (e) => {
+    setPosterFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -25,9 +31,18 @@ const ComposeEvent = ({ onClose, onEventCreated }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('/api/events', formData, {
+      const data = new FormData();
+      data.append('title', formData.title);
+      data.append('poster', formData.organizer); // organizer text
+      data.append('description', formData.description);
+      data.append('registrationLink', formData.registrationLink);
+      data.append('posterUrl', posterFile); // actual file
+
+
+      const response = await axios.post('/api/events', data, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         }
       });
       onEventCreated(response.data);
@@ -73,18 +88,18 @@ const ComposeEvent = ({ onClose, onEventCreated }) => {
 
           <div className="form-group">
             <label className="form-label" htmlFor="poster">
-              Poster/Organizer *
+              Organizer *
             </label>
             <input
-              type="text"
-              id="poster"
-              name="poster"
-              className="form-input"
-              value={formData.poster}
-              onChange={handleChange}
-              required
-              placeholder="Enter poster or organizer name"
-            />
+            type="text"
+            id="organizer"
+            name="organizer"
+            className="form-input"
+            value={formData.organizer}
+            onChange={handleChange}
+            required
+            placeholder="Enter organizer name"
+          />
           </div>
 
           <div className="form-group">
@@ -116,6 +131,13 @@ const ComposeEvent = ({ onClose, onEventCreated }) => {
               required
               placeholder="https://example.com/register"
             />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="posterUrl">
+              Upload Poster *
+            </label>
+            <input type="file" name="posterUrl" onChange={handleFileChange} required />
           </div>
 
           <div style={{ display: 'flex', gap: '15px', marginTop: '30px' }}>
